@@ -99,6 +99,10 @@ inputs:
     description: 'A space-separated list of options to pass to the nix command'
     required: false
     default: ''
+  check-command:
+    description: 'Command(s) to be executed to check if the update broke anything'
+    required: false
+    default: ''
 outputs:
   pull-request-number:
     description: 'The number of the opened pull request'
@@ -185,6 +189,10 @@ runs:
     - name: Remove PR body template files
       shell: bash
       run: rm -f pr_body.txt pr_body.template
+    - name: Run check-command(s)
+      if: "${{ inputs.check-command != '' }}"
+      shell: bash
+      run: "${{ inputs.check-command }}"
     - name: Create PR
       id: create-pr
       uses: peter-evans/create-pull-request@v4
